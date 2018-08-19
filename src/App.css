@@ -13,11 +13,6 @@
   padding: 20px;
   color: white;
 }
-.drawArea {
-  height: 400px;
-  width: 400px;
-  border: 1px solid black;
-}
 .App-title {
   font-size: 1.5em;
 }
@@ -37,8 +32,8 @@ body {
 }
 
 .drawArea {
-  width: 400px;
-  height: 400px;
+  width: 600px;
+  height: 600px;
   border: 1px solid black;
   float: left;
   cursor: crosshair;
@@ -46,7 +41,7 @@ body {
 
 .path {
   fill: none;
-  stroke-width: 1px;
+  stroke-width: 3px;
   stroke: black;
   stroke-linejoin: round;
   stroke-linecap: round;

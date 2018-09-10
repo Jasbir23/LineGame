@@ -28,26 +28,91 @@
 
 body {
   font: 14px "Century Gothic", Futura, sans-serif;
-  margin: 20px;
+  overflow: hidden;
 }
 
 .drawArea {
-  width: 600px;
-  height: 600px;
-  border: 1px solid black;
   float: left;
+  background: black;
   cursor: crosshair;
+  overflow-y: hidden;
 }
 
 .path {
   fill: none;
-  stroke-width: 3px;
-  stroke: black;
+  /* stroke-width: 4px; */
   stroke-linejoin: round;
   stroke-linecap: round;
+  -webkit-animation: green-laser 0.1s infinite;
+  opacity: 0.5;
+}
+.path2 {
+  fill: none;
+  /* stroke-width: 4px; */
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+.obstacle {
+  stroke-width: 7px;
+ /* -webkit-animation: obstacle 0.5s infinite; */
+ stroke: grey;
+}
+.startPt {
+  /* fill: rgb(240, 248, 255); */
+  stroke-width:5;
+ stroke: rgba(50, 184, 247);
+   /* stroke: startPt;  */
+}
+.animateSt {
+ -webkit-animation: startPt 0.5s infinite;
+}
+.targetPtInitial {
+  stroke-width: 10;
+}
+.animateTar {
+ -webkit-animation: startPt2 0.5s infinite;
 }
 
 .drawing {
   width: 100%;
   height: 100%;
+}
+
+@keyframes green-laser {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes startPt {
+  0% {
+    stroke: rgba(50, 184, 247, 0)  }
+  50% {
+    stroke: rgba(50, 184, 247, 0.5) 
+  }
+  100% {
+    stroke: rgba(50, 184, 247, 0)  }
+}
+@keyframes obstacle {
+  0% {
+    stroke: rgba(128, 128, 128, 0)  }
+  50% {
+    stroke: rgba(128, 128, 128, 0.5) 
+  }
+  100% {
+    stroke: rgba(128, 128, 128, 0)  }
+}
+@keyframes startPt2 {
+  0% {
+    stroke: rgba(182, 230, 23, 0)  }
+  50% {
+    stroke: rgba(182, 230, 23, 0.5) 
+  }
+  100% {
+    stroke: rgba(182, 230, 23, 0)  }
 }

@@ -4,17 +4,49 @@ import Immutable from "immutable";
 import levels from "./levels";
 
 var allLevels = levels(window.innerHeight, window.innerWidth)
-var levelNo = 0;
+var levelNo = 1;
 
 // var startPt= [[25,525],[75,525],[75,575], [25,575]];
 var startPt = allLevels[levelNo].start;
 var targetPt= allLevels[levelNo].target;
 var obstacles= allLevels[levelNo].obstacles;
-obstacles.push(targetPt)
-let lineMax = 900;
+// obstacles.push(targetPt)
+var pts = []
+obstacles[0].map(item => {
+  pts.push({ x: item[0]-100, y: item[1]+200 })
+})
+var centroid = get_polygon_centroid(pts)
+let lineMax = window.innerHeight / 3;
 let lineLength = 0;
 let targetColor= "black";
 
+
+function get_polygon_centroid(pts) {
+  var first = pts[0], last = pts[pts.length-1];
+  if (first.x != last.x || first.y != last.y) pts.push(first);
+  var twicearea=0,
+  x=0, y=0,
+  nPts = pts.length,
+  p1, p2, f;
+  for ( var i=0, j=nPts-1 ; i<nPts ; j=i++ ) {
+     p1 = pts[i]; p2 = pts[j];
+     f = p1.x*p2.y - p2.x*p1.y;
+     twicearea += f;          
+     x += ( p1.x + p2.x ) * f;
+     y += ( p1.y + p2.y ) * f;
+  }
+  f = twicearea * 3;
+  return { x:x/f, y:y/f };
+}
+
+function rotate(cx, cy, x, y, angle) {
+  var radians = (Math.PI / 180) * angle,
+      cos = Math.cos(radians),
+      sin = Math.sin(radians),
+      nx = (cos * (x - cx)) + (sin * (y - cy)) + cx,
+      ny = (cos * (y - cy)) - (sin * (x - cx)) + cy;
+  return [nx, ny];
+}
 class DrawArea extends React.Component {
     constructor() {
       super();
@@ -23,7 +55,9 @@ class DrawArea extends React.Component {
         lines: new Immutable.List(),
         relArray : new Immutable.List(),
         isDrawing: false,
-        isAnimating: false
+        isAnimating: false,
+        propogationLogic: 'top',
+        obstacles: obstacles
       };
     }
   
@@ -35,6 +69,20 @@ class DrawArea extends React.Component {
       this.refs.drawArea.addEventListener('touchmove', (event) => this.handleMouseMove(event), false)
       this.refs.drawArea.addEventListener('touchend', (event) => this.handleMouseUp(event), false)
       this.refs.drawArea.addEventListener('touchstart', (event) => this.handleMouseDown(event), false)
+      var rotated = []
+      let angle = 0;
+      setInterval(() => {
+          angle > 360 ? angle = 0 : angle+= 1;
+          rotated = []
+          obstacles[0].map(item => {
+          rotated.push(rotate(centroid.x,centroid.y,item[0]-100,item[1]+200, angle))
+      })
+        obstacles[1] = rotated
+        this.setState({
+          obstacles: obstacles
+        })
+    },10)
+    this.particleAnimation();
     }
     switchLevel() {
       var len = allLevels.length;
@@ -52,19 +100,20 @@ obstacles.push(targetPt)
       document.querySelector('#target').classList.add('animateTar');
       var touchPoint = [mouseEvent.touches[0].clientX, mouseEvent.touches[0].clientY];
       if (this.inside(touchPoint,targetPt)) this.switchLevel();
-      if (!this.inside(touchPoint,startPt)) return;
+      // if (!this.inside(touchPoint,startPt)) return;
       const point = this.relativeCoordinatesForEvent(mouseEvent);
       clearInterval(this.timer)
-      this.setState({
-        lines: new Immutable.List()
-      }, () => {
+      // this.setState({
+      //   lines: new Immutable.List()
+      // }, () => {
         this.setState(prevState => ({
           lines: prevState.lines.push(new Immutable.List([point])),
           isDrawing: true,
           isAnimating: false,
-          relArray: new Immutable.List()
+          relArray: new Immutable.List(),
+          propogationLogic: 'top'
         }));
-      })
+      // })
     }
   
     inside(point, vs) {
@@ -109,10 +158,22 @@ obstacles.push(targetPt)
       const dist = Math.sqrt(Math.pow((prevPoint.get('y') - point.get('y')), 2) + Math.pow((prevPoint.get('x') - point.get('x')), 2));
       const xDir = point.get('y') < prevPoint.get('y');
       const yDir = point.get('x') < prevPoint.get('x');
+      let relSeg = [];
+      if(dist > 3) {
+        let flag = 0;
+        let factor = 3;
+        while(flag < dist) {
+          flag = flag + factor;
+          relSeg.push({ slope : slope, dist : factor, xDir: xDir, yDir: yDir })
+        }
+      } else {
+        relSeg.push({ slope : slope, dist : dist, xDir: xDir, yDir: yDir })
+      }
+      let newSeg = new Immutable.List(relSeg)
       lineLength= lineLength + dist;
       this.setState(prevState =>  ({
         lines: prevState.lines.updateIn([prevState.lines.size - 1], line => line.push(point)),
-        relArray: prevState.relArray.push({ slope : slope, dist : dist, xDir: xDir, yDir: yDir })
+        relArray: prevState.relArray.concat(newSeg)
       }));
     }
     }
@@ -126,6 +187,7 @@ obstacles.push(targetPt)
           if((this.state.lines.get(this.state.lines.size - 1) && this.state.lines.get(this.state.lines.size - 1).size === 0) || !this.state.lines.get(this.state.lines.size - 1)) {
             this.setState({ 
             isAnimating: false,
+            propogationLogic: 'top',
           lines: new Immutable.List() }) 
             clearInterval(timer2);
             clearInterval(this.timer);
@@ -135,7 +197,7 @@ obstacles.push(targetPt)
               lines: prevState.lines.updateIn([prevState.lines.size - 1], line => {
                 if(line) {
                if(line.size > 25) {
-                return line.splice(0,5) || line.splice(0,line.size - 1) && line
+                return line.splice(0,3) || line.splice(0,line.size - 1) && line
                 }
                 else return line.shift()
               }
@@ -148,6 +210,26 @@ obstacles.push(targetPt)
           isAnimating: true
         })
       }
+      clean() {
+        let timer2 = setInterval(() => {
+          if((this.state.lines.get(this.state.lines.size - 1) && this.state.lines.get(this.state.lines.size - 1).size === 0) || !this.state.lines.get(this.state.lines.size - 1)) {
+            
+            clearInterval(timer2);
+          }
+          else {
+            this.setState(prevState =>  ({
+              lines: prevState.lines.updateIn([prevState.lines.size - 1], line => {
+                if(line) {
+               if(line.size > 25) {
+                return line.splice(0,3) || line.splice(0,line.size - 1) && line
+                }
+                else return line.shift()
+              }
+              })
+            }))
+          }
+      }, 20)
+      }
   
     handleMouseUp() {
       document.querySelector('#startPt').classList.add('animateSt');
@@ -158,7 +240,7 @@ obstacles.push(targetPt)
       const pointNumber = this.state.lines.get(this.state.lines.size - 1) && this.state.lines.get(this.state.lines.size - 1).size - 1;
       const lastPoint = this.state.lines.getIn([listNumber, pointNumber]);
       if(pointNumber > 8)
-      lastPoint && !this.state.isAnimating && pointNumber && this.animateLine(lastPoint, this.state.relArray);
+      lastPoint && !this.state.isAnimating && pointNumber && this.animateLine(lastPoint, this.state.relArray)
       else this.emptyOut();
     }
     animateLine (lastPoint, ptArray) {
@@ -185,7 +267,7 @@ obstacles.push(targetPt)
         })
         if(i >= ptArray.size - 1) {
           clearInterval(this.timer);
-          if(refPoint.get('x') < window.innerWidth && refPoint.get('x') > 0 && refPoint.get('y') < window.innerHeight && refPoint.get('y') > 0) this.animateLine(refPoint, this.state.relArray)
+          if(refPoint.get('y') < window.innerHeight && refPoint.get('y') > 0) this.animateLine(refPoint, this.state.relArray)
           else {
           this.emptyOut();
         }
@@ -199,14 +281,34 @@ obstacles.push(targetPt)
           if(item.slope === Infinity) newY -= item.dist;
           else if(item.slope === -Infinity) newY += item.dist;
           else if((item.xDir && !item.yDir) || (!item.xDir && !item.yDir)){
-            newY += (item.dist * Math.sin(Math.atan(item.slope)));
-            newX += (item.dist * Math.cos(Math.atan(item.slope))) 
+            switch(this.state.propogationLogic) {
+              case 'top': newY += (item.dist * Math.sin(Math.atan(item.slope)));
+                          newX += (item.dist * Math.cos(Math.atan(item.slope)));
+                          break;
+              case 'right': newY += (item.dist * Math.sin(Math.atan(item.slope)));
+                            newX -= (item.dist * Math.cos(Math.atan(item.slope)));
+                            break;
+              case 'left': newY -= (item.dist * Math.sin(Math.atan(item.slope)));
+                            newX += (item.dist * Math.cos(Math.atan(item.slope)));
+                            break;
+            }
           }
           else if((!item.xDir && item.yDir) || (item.xDir && item.yDir)) {
-            newY -= (item.dist * Math.sin(Math.atan(item.slope)));
-            newX -= (item.dist * Math.cos(Math.atan(item.slope))) 
+            switch(this.state.propogationLogic) {
+              case 'top': newY -= (item.dist * Math.sin(Math.atan(item.slope)));
+                          newX -= (item.dist * Math.cos(Math.atan(item.slope)));
+                          break;
+              case 'right': newY += (item.dist * Math.sin(Math.atan(item.slope)));
+                          newX -= (item.dist * Math.cos(Math.atan(item.slope)));
+                          break;
+              case 'left': newY -= (item.dist * Math.sin(Math.atan(item.slope)));
+                          newX += (item.dist * Math.cos(Math.atan(item.slope)));
+                          break;
+            }
           }
           refPoint = new Immutable.Map({ x: newX, y: newY })
+          if(refPoint.get('x') > window.innerWidth - 10) this.setState({ propogationLogic: 'right' })
+          if(refPoint.get('x') < 10) this.setState({ propogationLogic: 'left' })
           this.setState(prevState =>  ({
             lines: prevState.lines.updateIn([prevState.lines.size - 1], line => line && line.push(refPoint))
           }));
@@ -241,14 +343,14 @@ obstacles.push(targetPt)
             className="drawArea"
             ref="drawArea"
           >
-            <Drawing lines={this.state.lines} />
+            <Drawing lines={this.state.lines} obstacles={this.state.obstacles} />
           </div>
         </div>
       );
     }
   }
   
-  function Drawing({ lines }) {
+  function Drawing({ lines, obstacles }) {
     return (
       <svg className="drawing">
       <defs>

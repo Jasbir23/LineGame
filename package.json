@@ -2,16 +2,22 @@
   "name": "line-game",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://jasbir23.github.io/LineGame/",
   "dependencies": {
+    "exif-js": "^2.3.0",
     "immutable": "^3.8.2",
     "react": "^16.4.1",
     "react-dom": "^16.4.1",
+    "react-particles-js": "^2.3.0",
     "react-scripts": "1.1.4"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
+    "deploy": "gh-pages -d build",
     "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   }
 }

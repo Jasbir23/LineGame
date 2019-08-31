@@ -1,8 +1,9 @@
 .App {
   text-align: center;
 }
-html { overflow-y: hidden;
-overflow-x: hidden;
+html {
+  overflow-y: hidden;
+  overflow-x: hidden;
 }
 
 .App-logo {
@@ -25,8 +26,12 @@ overflow-x: hidden;
 }
 
 @keyframes App-logo-spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 body {
@@ -34,10 +39,16 @@ body {
   overflow: hidden;
   background: black;
 }
+.planet {
+  position: absolute;
+  background-image: url("assets/planet.png");
+  background-size: contain;
+  /* animation: rotateFull 5s linear infinite; */
+}
 
 .drawArea {
   float: left;
-  background: white;
+  background: black;
   position: absolute;
   cursor: crosshair;
   overflow-y: hidden;
@@ -45,6 +56,44 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+  /* background-image: url("assets/background.png"); */
+  background: black;
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none; /* Safari */
+  -khtml-user-select: none; /* Konqueror HTML */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
+  user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome and Opera */
+}
+.winModal {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-size: 30px;
+  font-weight: bold;
+  color: white;
+  text-align: center;
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.5);
+}
+.nextButton {
+  height: 50px;
+  width: 200px;
+  margin: 50px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50px;
+  background: blue;
+  font-size: 20px;
 }
 
 .path {
@@ -60,32 +109,29 @@ body {
   stroke-linecap: round;
 }
 .obstacle {
- /* -webkit-animation: obstacle 0.5s infinite; */
- /* fill: 	#f12711; */
- stroke-linejoin: round;
+  /* -webkit-animation: obstacle 0.5s infinite; */
+  /* fill: 	#f12711; */
+  stroke-linejoin: round;
   stroke-linecap: round;
 }
 .target {
   border-radius: 50%;
   -webkit-animation: target2 2s infinite;
-  box-shadow:
-      inset 0 0 5px #fff,      /* inner white */
-      inset 2px 0 8px #f0f,   /* inner left magenta short */
-      inset -2px 0 8px #0ff,  /* inner right cyan short */
-      inset 2px 0 30px #f0f,  /* inner left magenta broad */
-      inset -2px 0 30px #0ff, /* inner right cyan broad */
-      0 0 5px #fff,            /* outer white */
-      -1px 0 8px #f0f,        /* outer left magenta */
-      1px 0 8px #0ff;         /* outer right cyan */
+  box-shadow: inset 0 0 5px #fff, /* inner white */ inset 2px 0 8px #f0f,
+    /* inner left magenta short */ inset -2px 0 8px #0ff,
+    /* inner right cyan short */ inset 2px 0 30px #f0f,
+    /* inner left magenta broad */ inset -2px 0 30px #0ff,
+    /* inner right cyan broad */ 0 0 5px #fff, /* outer white */ -1px 0 8px #f0f,
+    /* outer left magenta */ 1px 0 8px #0ff; /* outer right cyan */
 }
 .targetAnim {
 }
 .startPt {
   fill: none;
-   /* stroke: startPt;  */
+  /* stroke: startPt;  */
 }
 .animateSt {
- -webkit-animation: startPt 0.5s infinite;
+  -webkit-animation: startPt 0.5s infinite;
 }
 .targetPt {
   fill: none;
@@ -94,7 +140,7 @@ body {
   fill: orange;
 }
 .animateTar {
- -webkit-animation: startPt2 0.5s infinite;
+  -webkit-animation: startPt2 0.5s infinite;
 }
 
 .drawing {
@@ -108,22 +154,22 @@ body {
   border-radius: 5px;
   background: grey;
   opacity: 0;
- -webkit-animation: explode 2s linear;
+  -webkit-animation: explode 2s linear;
 }
 .brick {
   position: absolute;
-  background: linear-gradient(-45deg, rgb(192, 35, 213), rgb(95, 81, 214));
+  /* background: linear-gradient(-45deg, rgb(192, 35, 213), rgb(95, 81, 214)); */
 }
 .ice {
   position: absolute;
   height: 100px;
   width: 100px;
-  background: rgb(0,0,255,0.3);
+  background: rgb(0, 0, 255, 0.3);
   /* opacity: 0; */
   /* -webkit-animation: iceAnim 1s linear; */
 }
 .iceAnim {
- -webkit-animation: iceAnim 1s linear;
+  -webkit-animation: iceAnim 1s linear;
 }
 .particle {
   height: 25px;
@@ -131,23 +177,23 @@ body {
   width: 25px;
   top: 37px;
   left: 37px;
-  background: linear-gradient(-45deg, #23A6D5, #23D5AB);
+  background: linear-gradient(-45deg, #23a6d5, #23d5ab);
   opacity: 0;
   perspective: 800;
 }
 .anim1 {
- -webkit-animation: scatter 1s linear;
+  -webkit-animation: scatter 1s linear;
 }
 .anim2 {
   -webkit-animation: scatter2 1s linear;
- }
- .anim3 {
+}
+.anim3 {
   -webkit-animation: scatter3 1s linear;
- }
- .anim4 {
+}
+.anim4 {
   -webkit-animation: scatter4 1s linear;
- }
- @keyframes iceAnim {
+}
+@keyframes iceAnim {
   0% {
     transform: scale(1);
     opacity: 1;
@@ -157,13 +203,22 @@ body {
     opacity: 1;
   }
 }
+@keyframes rotateFull {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
 @keyframes scatter {
   0% {
     transform: scale(1) translate(0px, 0px) rotateX(0deg) rotateX(0deg);
     opacity: 1;
   }
   100% {
-    transform: scale(0.2) translate(-150px,-150px) rotateX(180deg) rotateY(180deg);
+    transform: scale(0.2) translate(-150px, -150px) rotateX(180deg)
+      rotateY(180deg);
     opacity: 0;
   }
 }
@@ -173,7 +228,8 @@ body {
     opacity: 1;
   }
   100% {
-    transform: scale(0.2) translate(150px,-150px) rotateX(180deg) rotateY(180deg);
+    transform: scale(0.2) translate(150px, -150px) rotateX(180deg)
+      rotateY(180deg);
     opacity: 0;
   }
 }
@@ -183,7 +239,8 @@ body {
     opacity: 1;
   }
   100% {
-    transform: scale(0.2) translate(-150px,150px) rotateX(180deg) rotateY(180deg);
+    transform: scale(0.2) translate(-150px, 150px) rotateX(180deg)
+      rotateY(180deg);
     opacity: 0;
   }
 }
@@ -193,7 +250,8 @@ body {
     opacity: 1;
   }
   100% {
-    transform: scale(0.2) translate(150px,150px) rotateX(180deg) rotateY(180deg);
+    transform: scale(0.2) translate(150px, 150px) rotateX(180deg)
+      rotateY(180deg);
     opacity: 0;
   }
 }
@@ -244,45 +302,55 @@ body {
 }
 @keyframes startPt {
   0% {
-    stroke: rgba(50, 184, 247, 0)  }
+    stroke: rgba(50, 184, 247, 0);
+  }
   50% {
-    stroke: rgba(50, 184, 247, 0.5) 
+    stroke: rgba(50, 184, 247, 0.5);
   }
   100% {
-    stroke: rgba(50, 184, 247, 0)  }
+    stroke: rgba(50, 184, 247, 0);
+  }
 }
 @keyframes obstacle {
   0% {
-    stroke: rgba(128, 128, 128, 0)  }
+    stroke: rgba(128, 128, 128, 0);
+  }
   50% {
-    stroke: rgba(128, 128, 128, 0.5) 
+    stroke: rgba(128, 128, 128, 0.5);
   }
   100% {
-    stroke: rgba(128, 128, 128, 0)  }
+    stroke: rgba(128, 128, 128, 0);
+  }
 }
 @keyframes startPt2 {
   0% {
-    stroke: rgba(182, 230, 23, 0)  }
+    stroke: rgba(182, 230, 23, 0);
+  }
   50% {
-    stroke: rgba(182, 230, 23, 0.5) 
+    stroke: rgba(182, 230, 23, 0.5);
   }
   100% {
-    stroke: rgba(182, 230, 23, 0)  }
+    stroke: rgba(182, 230, 23, 0);
+  }
 }
 .startDiv {
   position: absolute;
-  background: linear-gradient(-45deg, #458fe4, #56a8ce);
- -webkit-animation: Gradient 1s infinite;
+  border: 2px solid white;
+  /* animation: Gradient 1s infinite; */
+  /* -webkit-animation: Gradient 1s infinite; */
   box-shadow: #222;
+}
+.absoluteDiv {
+  position: absolute;
 }
 .tarDiv {
   position: absolute;
   border-radius: 10px;
   background: white;
-  box-shadow: #222
+  box-shadow: #222;
 }
 .activeTar {
-  background: linear-gradient(-45deg, #23A6D5, #23D5AB);
+  background: linear-gradient(-45deg, #23a6d5, #23d5ab);
   opacity: 1;
 }
 .lineLength {
@@ -290,50 +358,39 @@ body {
   top: 20px;
   left: 10px;
   font-size: 20px;
-  background: #23D5AB;
+  background: #23d5ab;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
-@-webkit-keyframes Gradient {
-	0% {
-		background-position: 0% 50%
-	}
-	50% {
-		background-position: 100% 50%
-	}
-	100% {
-		background-position: 0% 50%
-	}
-}
 @-webkit-keyframes rot {
-	0% {
-		transform: rotateX(0)
-	}
-	100% {
-		transform: rotateX(360)
-	}
+  0% {
+    transform: rotateX(0);
+  }
+  100% {
+    transform: rotateX(360);
+  }
 }
 
-@-moz-keyframes Gradient {
-	0% {
-		background-position: 0% 50%
-	}
-	50% {
-		background-position: 100% 50%
-	}
-	100% {
-		background-position: 0% 50%
-	}
-}
+/* @-moz-keyframes Gradient {
+  0% {
+    background-position: 0% 25%;
+  }
+  50% {
+    background-position: 50% 25%;
+  }
+  100% {
+    background-position: 0% 25%;
+  }
+} */
 
 @keyframes Gradient {
-	0% {
-  box-shadow: 0px 0px 100px #23A6D5;
-	}
-	50% {
-  box-shadow: 0px 0px 50px #23D5AB;
-	}
-	100% {
-  box-shadow: 0px 0px 100px #23A6D5;
-	}
+  0% {
+    box-shadow: 0px 0px 100px #23a6d5;
+  }
+  50% {
+    box-shadow: 0px 0px 90px #23d5ab;
+  }
+  100% {
+    box-shadow: 0px 0px 100px #23a6d5;
+  }
 }
